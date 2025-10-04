@@ -1,0 +1,46 @@
+<mah:CustomDialog x:Class="ABCinema_WPF.Controls.SessionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:ABCinema_WPF.Controls"
+             mc:Ignorable="d"
+             Background="#2e2e2e">
+    <StackPanel Margin="20">
+        <TextBlock Text="ID Фильма" Foreground="White"/>
+        <TextBox x:Name="CinemaIdBox" Margin="0,5" />
+
+        <TextBlock Text="ID Зала" Foreground="White"/>
+        <TextBox x:Name="HallIdBox" Margin="0,5" />
+        
+        <TextBlock Text="Базовая цена билета" Foreground="White"/>
+        <TextBox x:Name="PriceBox" Margin="0,5" />
+        
+        <TextBlock Text="Начало сеанса" Foreground="White"/>
+        <mah:DateTimePicker x:Name="StartDateTime" Margin="0, 5"/>
+        
+        <TextBlock Text="Конец сеанса" Foreground="White"/>
+        <mah:DateTimePicker x:Name="EndDateTime" Margin="0, 5"/>
+        
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Назад"
+                    Command="{Binding CloseSessionDialogCommand}"
+                    CommandParameter="{Binding}"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0" />
+
+            <Button Content="ОК"
+                    Command="{Binding AddSessionCommand}"
+                    CommandParameter="{Binding}"
+                    HorizontalAlignment="Right"
+                    Grid.Column="1" />
+        </Grid>
+        
+    </StackPanel>
+</mah:CustomDialog>
