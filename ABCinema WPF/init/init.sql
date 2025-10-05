@@ -25,6 +25,7 @@ CREATE TABLE movie_genre(
 -- 🏛️ Зал
 CREATE TABLE hall (
                       id SERIAL PRIMARY KEY,
+                      name TEXT,
                       rows INT NOT NULL CHECK (rows > 0),
     seats_per_row INT NOT NULL CHECK (seats_per_row > 0)
 );
