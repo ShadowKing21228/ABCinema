@@ -1,0 +1,45 @@
+<mah:CustomDialog x:Class="ABCinema_WPF.Controls.HallUpdateDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ABCinema_WPF.Controls"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" >
+    
+    <Grid>
+        <StackPanel Margin="20">
+
+            <TextBlock Text="Название" Foreground="White"/>
+            <TextBox x:Name="NameBox" Margin="0,5" />
+        
+            <TextBlock Text="Количество рядов" Foreground="White"/>
+            <TextBox x:Name="RowBox" Margin="0,5" />
+        
+            <TextBlock Text="Количество мест в ряду" Foreground="White"/>
+            <TextBox x:Name="SeatsPerBox" Margin="0,5" />
+            
+        
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Content="Назад"
+                        Command="{Binding CloseHallUpdateDialogCommand}"
+                        CommandParameter="{Binding}"
+                        HorizontalAlignment="Left"
+                        Grid.Column="0" />
+
+                <Button Content="ОК"
+                        Command="{Binding HallUpdateCommand}"
+                        CommandParameter="{Binding}"
+                        HorizontalAlignment="Right"
+                        Grid.Column="1" />
+            </Grid>
+        
+        </StackPanel>
+    </Grid>
+</mah:CustomDialog>

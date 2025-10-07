@@ -39,3 +39,12 @@ CREATE TABLE session (
                          end_time TIMESTAMP NOT NULL,
                          base_price DECIMAL(8,2) NOT NULL CHECK (base_price >= 0)
 );
+
+CREATE TABLE seat_reservation (
+                                  id SERIAL PRIMARY KEY,
+                                  session_id INT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+                                  row_number INT NOT NULL CHECK (row_number >= 0),
+                                  seat_number INT NOT NULL CHECK (seat_number >= 0),
+                                  reserved_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  CONSTRAINT unique_seat_per_session UNIQUE (session_id, row_number, seat_number)
+);

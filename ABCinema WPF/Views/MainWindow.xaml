@@ -11,7 +11,7 @@
             <ColumnDefinition Width="Auto"/> <!-- для шапки -->
             <ColumnDefinition Width="*"/>    <!-- для контента -->
         </Grid.ColumnDefinitions>
-        <mah:HamburgerMenu x:Name="MainMenu"
+        <mah:HamburgerMenu Grid.Column="1" x:Name="MainMenu"
                            DisplayMode="CompactInline"
                            IsPaneOpen="False"
                            PaneBackground="#1C1C1C"
@@ -28,8 +28,8 @@
                 </DataTemplate>
             </mah:HamburgerMenu.ItemTemplate>
             
-            <mah:HamburgerMenu.Content>
-                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+            <mah:HamburgerMenu.Content >
+                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
     </Grid>

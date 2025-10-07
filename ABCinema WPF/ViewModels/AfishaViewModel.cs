@@ -3,14 +3,15 @@ using System.ComponentModel;
 using System.Windows.Input;
 using ABCinema_WPF.Controls;
 using ABCinema_WPF.Models;
+using ABCinema_WPF.Services;
 using ABCinema_WPF.Utils;
+using ABCinema_WPF.Views;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace ABCinema_WPF.ViewModels;
 
 public class AfishaViewModel : INotifyPropertyChanged
 {
-    
     public ICommand TodayButtonClick { get; set; }
     
     public ICommand TomorrowButtonClick { get; set; }
@@ -22,6 +23,14 @@ public class AfishaViewModel : INotifyPropertyChanged
     public ICommand AddSessionCommand { get; set; }
     
     public ICommand CloseSessionDialogCommand { get; set; }
+     
+    public ICommand SelectSessionCommand { get; set; }
+    
+    public ICommand ShowUpdateSessionDialogCommand { get; }
+    
+    public ICommand CloseUpdateSessionDialogCommand { get; }
+    
+    public ICommand UpdateSessionCommand { get; }
     
     private DateTime _selectedDate;
     
@@ -39,29 +48,40 @@ public class AfishaViewModel : INotifyPropertyChanged
     public ObservableCollection<AfishaItem> AfishaItems { get; set; }
 
     private IDialogCoordinator DialogCoordinator { get; set; }
-
-    private SessionDialog _sessionDialog;
+    
+    private INavigationService NavigationService { get; set; }
+    
+    private readonly SessionDialog _sessionDialog;
+    
+    private readonly SessionUpdateDialog _updateDialog;
     
     public event PropertyChangedEventHandler? PropertyChanged;
     
     //public ICommand BuyCommand = new RelayCommand<Movie>(BuyTicket);
 
-    private AfishaViewModel(ObservableCollection<AfishaItem> afishaItems, IDialogCoordinator coordinator)
+    private AfishaViewModel(ObservableCollection<AfishaItem> afishaItems, IDialogCoordinator coordinator, INavigationService navigationService)
     {
         AfishaItems = afishaItems;
         DialogCoordinator = coordinator;
+        NavigationService = navigationService;
+        _updateDialog = new SessionUpdateDialog { DataContext = this };
         _sessionDialog = new SessionDialog { DataContext = this };
+
+        ShowUpdateSessionDialogCommand = new RelayCommand(ShowUpdateDialog);
+        CloseUpdateSessionDialogCommand = new RelayCommand(CloseUpdateDialog);
+        UpdateSessionCommand = new RelayCommand(UpdateSession);
         TodayButtonClick = new RelayCommand(SelectTodayButtonClick);
         TomorrowButtonClick = new RelayCommand(SelectTomorrowButtonClick);
         DayAfterTomorrowButtonClick = new RelayCommand(SelectDayAfterTomorrowButtonClick);
         ShowSessionDialogCommand = new RelayCommand(ShowAddSessionDialog);
         AddSessionCommand = new RelayCommand(AddSession);
         CloseSessionDialogCommand = new RelayCommand(CloseAddSessionDialog);
+        SelectSessionCommand = new RelayCommand(SelectSession);
     }
     
-    public static async Task<AfishaViewModel> AfishaViewModelFactory(DateTime dateTime, IDialogCoordinator coordinator) 
+    public static async Task<AfishaViewModel> AfishaViewModelFactory(DateTime dateTime, IDialogCoordinator coordinator, INavigationService navigationService) 
     
-        => new(await AfishaModel.GetAfishaItemsAsync(dateTime), coordinator);
+        => new(await AfishaModel.GetAfishaItemsAsync(dateTime), coordinator, navigationService);
     
 
     private async Task SelectTodayButtonClick(object? parameter)
@@ -135,8 +155,52 @@ public class AfishaViewModel : INotifyPropertyChanged
     }
     
     private async Task CloseAddSessionDialog(object? parameter) => await DialogCoordinator.HideMetroDialogAsync(this, _sessionDialog);
-    
 
+    private async Task SelectSession(object? parameter)
+    {
+        if (parameter is not Session session) return;
+        
+        NavigationService.Navigate(new BuyTicketView {
+            DataContext = await BuyTicketViewModel.Factory(session, DialogCoordinator, NavigationService)
+        });
+    }
+    
+    private async Task ShowUpdateDialog(object? parameter)
+    {
+        await DialogCoordinator.ShowMetroDialogAsync(this, _updateDialog);
+    }
+
+    private async Task CloseUpdateDialog(object? parameter)
+    {
+        await DialogCoordinator.HideMetroDialogAsync(this, _updateDialog);
+    }
+    
+    private async Task UpdateSession(object? parameter)
+    {
+        if (!int.TryParse(_updateDialog.SessionIdBox.Text, out var sessionId) ||
+            !int.TryParse(_updateDialog.CinemaIdBox.Text, out var movieId) ||
+            !int.TryParse(_updateDialog.HallIdBox.Text, out var hallId) ||
+            !decimal.TryParse(_updateDialog.PriceBox.Text, out var price) ||
+            !_updateDialog.StartDateTime.SelectedDateTime.HasValue ||
+            !_updateDialog.EndDateTime.SelectedDateTime.HasValue)
+            return;
+
+        var updated = new Session(
+            sessionId,
+            movieId,
+            hallId,
+            _updateDialog.StartDateTime.SelectedDateTime.Value,
+            _updateDialog.EndDateTime.SelectedDateTime.Value,
+            price,
+            false // или пересчитать по времени
+        );
+
+        await AfishaModel.UpdateSessionAsync(updated);
+        await CloseUpdateDialog(parameter);
+    }
+
+
+    
     //protected async Task OnPropertyChanged(PropertyChangedEventArgs e)
     //{
     //    await LoadSessionsAsync();

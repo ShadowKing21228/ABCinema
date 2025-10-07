@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ABCinema_WPF.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -10,10 +11,11 @@ public partial class CinemaView : Page
     public CinemaView()
     {
         InitializeComponent();
-        Loaded += CinemaViewLoaded;
     }
-    private async void CinemaViewLoaded(object sender, RoutedEventArgs e)
+
+    private void Control_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        DataContext = await CinemaViewModel.CreateAsync(DialogCoordinator.Instance);
+        if (DataContext is CinemaViewModel vm && vm.ShowUpdateCinemaDialogCommand.CanExecute(null))
+            vm.ShowUpdateCinemaDialogCommand.Execute(null);
     }
 }

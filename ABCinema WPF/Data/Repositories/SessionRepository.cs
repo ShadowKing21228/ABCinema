@@ -44,4 +44,27 @@ public static class SessionRepository
         await cmd.ExecuteNonQueryAsync();
         AppLogger.LogInfo("Добавление сессии успешно завершено");
     }
+    
+    public static async Task Update(Session session)
+    {
+        await using var conn = DbConnectionFactory.CreateConnection();
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand("""
+                                                    UPDATE session
+                                                    SET movie_id = @movie, hall_id = @hall, start_time = @start, end_time = @end, base_price = @price
+                                                    WHERE id = @id
+                                                """, conn);
+
+        cmd.Parameters.AddWithValue("id", session.Id);
+        cmd.Parameters.AddWithValue("movie", session.MovieId);
+        cmd.Parameters.AddWithValue("hall", session.HallId);
+        cmd.Parameters.AddWithValue("start", session.StartTime);
+        cmd.Parameters.AddWithValue("end", session.EndTime);
+        cmd.Parameters.AddWithValue("price", session.BasePrice);
+
+        AppLogger.LogInfo($"Сеанс {session.Id} обновлён: {session.MovieId} в зале {session.HallId}");
+        await cmd.ExecuteNonQueryAsync();
+    }
+
 }

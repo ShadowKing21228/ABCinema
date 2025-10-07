@@ -66,4 +66,65 @@ public static class MovieRepository
         AppLogger.LogInfo($"Добавление фильма {movie.Id} : {movie.Title} успешно завершено");
         return movie;
     }
+    
+    public static async Task Update(Movie movie)
+    {
+        await using var conn = DbConnectionFactory.CreateConnection();
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand("""
+                                                    UPDATE movie SET title = @title, description = @desc, duration_minutes = @dur, rating = @rating, poster_url = @poster
+                                                    WHERE id = @id
+                                                """, conn);
+
+        cmd.Parameters.AddWithValue("title", movie.Title);
+        cmd.Parameters.AddWithValue("desc", movie.Description);
+        cmd.Parameters.AddWithValue("dur", movie.DurationMinutes);
+        cmd.Parameters.AddWithValue("rating", movie.Rating);
+        cmd.Parameters.AddWithValue("poster", movie.Poster);
+        cmd.Parameters.AddWithValue("id", movie.Id);
+
+        AppLogger.LogInfo($"Фильм {movie.Id} обновлён: {movie.Title}");
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    public static async Task<int> AddMovieAndGetId(Movie movie)
+    {
+        await using var conn = DbConnectionFactory.CreateConnection();
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand("""
+                                                    INSERT INTO movie (title, description, duration_minutes, rating, poster_url)
+                                                    VALUES (@title, @desc, @dur, @rating, @poster)
+                                                    RETURNING id
+                                                """, conn);
+
+        cmd.Parameters.AddWithValue("title", movie.Title);
+        cmd.Parameters.AddWithValue("desc", movie.Description);
+        cmd.Parameters.AddWithValue("dur", movie.DurationMinutes);
+        cmd.Parameters.AddWithValue("rating", movie.Rating);
+        cmd.Parameters.AddWithValue("poster", movie.Poster);
+
+        var id = (int)await cmd.ExecuteScalarAsync();
+        
+        AppLogger.LogInfo($"Фильм {movie.Title} добавлен с ID {id}");
+        return id;
+    }
+    
+    public static async Task LinkGenreToMovie(int movieId, int genreId)
+    {
+        await using var conn = DbConnectionFactory.CreateConnection();
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand("""
+                                                    INSERT INTO movie_genre (movie_id, genre_id)
+                                                    VALUES (@movie, @genre)
+                                                """, conn);
+
+        cmd.Parameters.AddWithValue("movie", movieId);
+        cmd.Parameters.AddWithValue("genre", genreId);
+
+        await cmd.ExecuteNonQueryAsync();
+        AppLogger.LogInfo($"Жанр {genreId} привязан к фильму {movieId}");
+    }
 }

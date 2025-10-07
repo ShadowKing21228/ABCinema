@@ -8,6 +8,7 @@
       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       mc:Ignorable="d"
       Title="Фильмы" Background="#2E2E2E" >
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- для шапки -->
@@ -20,7 +21,7 @@
             </Button>
         </StackPanel>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding MovieItems}">
+        <ListView Grid.Row="1" ItemsSource="{Binding MovieItems}" SelectedItem="{Binding SelectedMovie, Mode=TwoWay}" MouseDoubleClick="Control_OnMouseDoubleClick">
             
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -51,7 +52,6 @@
                             </Grid>
                         </Border>
                     </DataTemplate>
-                    
                 </ListView.ItemTemplate>
         </ListView>
     </Grid>

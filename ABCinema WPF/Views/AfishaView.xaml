@@ -9,6 +9,7 @@
       mc:Ignorable="d"
       mah:DialogParticipation.Register="{Binding}"
       Title="Афиша" Background="#2E2E2E">
+    
     <Page.Resources>
         <utils:PriceConverter x:Key="Converter"/>
         <utils:InverseBoolConverter x:Key="BoolConverter"/>
@@ -42,6 +43,13 @@
             <Button x:Name="AddSessionButton" Command="{Binding ShowSessionDialogCommand}" CommandParameter="{Binding}" Margin="20, 10,0,10">
                 <TextBlock Text="Добавить сеанс" FontSize="18"> </TextBlock>
             </Button>
+            <Button x:Name="EditSessionButton"
+                    Command="{Binding ShowUpdateSessionDialogCommand}"
+                    CommandParameter="{Binding}"
+                    Margin="20, 10,0,10">
+                <TextBlock Text="Редактировать сеанс" FontSize="18" />
+            </Button>
+
         </StackPanel>
 
         <ListView Grid.Row="1" ItemsSource="{Binding AfishaItems}">

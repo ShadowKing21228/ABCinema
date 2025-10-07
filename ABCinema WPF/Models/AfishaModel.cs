@@ -41,4 +41,8 @@ public static class AfishaModel
     {
         await SessionRepository.Add(session);
     }
+    
+    public static async Task UpdateSessionAsync(Session session)
+        => await SessionRepository.Update(session);
+
 }

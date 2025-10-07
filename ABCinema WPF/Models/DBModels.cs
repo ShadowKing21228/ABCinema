@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ABCinema_WPF.Models;
@@ -95,3 +94,16 @@ public record HallItem(
     int SeatsPerRow,
     int Capacity
     );
+
+public record class SeatItem(
+    int RowNumber,
+    int SeatNumber,
+    bool IsReserved
+);
+
+public record class ReservedSeat(
+    int Id,
+    int SessionId,
+    int RowNumber,
+    int SeatNumber
+);
