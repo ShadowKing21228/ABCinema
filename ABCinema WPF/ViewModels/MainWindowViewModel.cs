@@ -42,11 +42,11 @@ public class MainWindowViewModel
         var cinemaItem = new HamburgerMenuGlyphItemDc {
             Label = "Фильмы",
             Glyph = "🎬",
-            Tag = new CinemaView()
+            Tag = new MovieView()
         };
         
         await cinemaItem.InitViewModelAsync(async view =>
-            await CinemaViewModel.CreateAsync(DialogCoordinator.Instance));
+            await MovieViewModel.CreateAsync(DialogCoordinator.Instance));
 
         var hallItem = new HamburgerMenuGlyphItemDc
         {

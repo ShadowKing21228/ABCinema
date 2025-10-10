@@ -4,15 +4,15 @@ namespace ABCinema_WPF.Data;
 
 public static class DbConnectionFactory
 {
-    private const string _ipAdress = "localhost";
-    private const string _port = "5433";
-    private const string _dbName = "cinema";
-    private const string _username = "admin";
-    private const string _password = "secret123";
+    private const string IpAdress = "localhost";
+    private const string Port = "5433";
+    private const string DbName = "cinema";
+    private const string Username = "admin";
+    private const string Password = "secret123";
     
-    private const string _connectionString = $"Host={_ipAdress};Port={_port};Database={_dbName};Username={_username};Password={_password}";
+    private const string ConnectionString = $"Host={IpAdress};Port={Port};Database={DbName};Username={Username};Password={Password}";
 
     public static NpgsqlConnection CreateConnection() {
-        return new NpgsqlConnection(_connectionString);
+        return new NpgsqlConnection(ConnectionString);
     }
 }

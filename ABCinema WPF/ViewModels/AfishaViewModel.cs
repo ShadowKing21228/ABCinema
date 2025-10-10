@@ -126,6 +126,7 @@ public class AfishaViewModel : INotifyPropertyChanged
             !_sessionDialog.StartDateTime.SelectedDateTime.HasValue ||
             !_sessionDialog.EndDateTime.SelectedDateTime.HasValue)
         {
+            DialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть введены", "Введите все поля корректно");
             return;
         }
         
@@ -133,9 +134,20 @@ public class AfishaViewModel : INotifyPropertyChanged
             !int.TryParse(_sessionDialog.HallIdBox.Text, out int hallId) ||
             !decimal.TryParse(_sessionDialog.PriceBox.Text, out decimal price))
         {
+            DialogCoordinator.ShowModalMessageExternal(this, "Поля Id и Цена должны быть числовыми", "Введите все поля корректно");
             return;
         }
 
+        if (price <= 0) 
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Цена не может быть отрицательной или 0", "Введите все поля корректно");
+            return;
+        }
+        
+        if (_sessionDialog.EndDateTime.SelectedDateTime.Value < _sessionDialog.StartDateTime.SelectedDateTime.Value) {
+            DialogCoordinator.ShowModalMessageExternal(this, "Время конца должно быть больше времени начала", "Введите все поля корректно");
+            return;
+        }
         var startTime = _sessionDialog.StartDateTime.SelectedDateTime.Value;
         var endTime = _sessionDialog.EndDateTime.SelectedDateTime.Value;
         
@@ -183,7 +195,10 @@ public class AfishaViewModel : INotifyPropertyChanged
             !decimal.TryParse(_updateDialog.PriceBox.Text, out var price) ||
             !_updateDialog.StartDateTime.SelectedDateTime.HasValue ||
             !_updateDialog.EndDateTime.SelectedDateTime.HasValue)
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть введены", "Введите все поля корректно");
             return;
+        }
 
         var updated = new Session(
             sessionId,
@@ -198,8 +213,6 @@ public class AfishaViewModel : INotifyPropertyChanged
         await AfishaModel.UpdateSessionAsync(updated);
         await CloseUpdateDialog(parameter);
     }
-
-
     
     //protected async Task OnPropertyChanged(PropertyChangedEventArgs e)
     //{

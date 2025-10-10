@@ -6,16 +6,16 @@ using MahApps.Metro.Controls.Dialogs;
 
 namespace ABCinema_WPF.Views;
 
-public partial class CinemaView : Page
+public partial class MovieView : Page
 {
-    public CinemaView()
+    public MovieView()
     {
         InitializeComponent();
     }
 
     private void Control_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is CinemaViewModel vm && vm.ShowUpdateCinemaDialogCommand.CanExecute(null))
+        if (DataContext is MovieViewModel vm && vm.ShowUpdateCinemaDialogCommand.CanExecute(null))
             vm.ShowUpdateCinemaDialogCommand.Execute(null);
     }
 }

@@ -77,11 +77,21 @@ public class HallViewModel : INotifyPropertyChanged
         if (string.IsNullOrWhiteSpace(_dialog.HallNameBox.Text)
             || string.IsNullOrWhiteSpace(_dialog.RowBox.Text)
             || string.IsNullOrWhiteSpace(_dialog.SeatsPerRowBox.Text))
+        {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть заполнены", "Введите все поля корректно");
             return;
+        }
 
-        if (!int.TryParse(_dialog.RowBox.Text,  out var row)
-            || !int.TryParse(_dialog.SeatsPerRowBox.Text, out var seatsPerRow))
+        if (!int.TryParse(_dialog.RowBox.Text, out var row)
+            || !int.TryParse(_dialog.SeatsPerRowBox.Text, out var seatsPerRow)) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Поля Ряд и Номер должны быть числовыми", "Введите все поля корректно");
             return;
+        }
+
+        if (row <= 0 || seatsPerRow <= 0) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Ряд и номер должны быть больше 0", "Введите поле корректно");
+            return;
+        }
 
         await HallModel.AddHallAsync(new Hall(
             1,
@@ -113,11 +123,18 @@ public class HallViewModel : INotifyPropertyChanged
         if (SelectedHall == null) return;
 
         var name = _updateDialog.NameBox.Text;
-        if (string.IsNullOrWhiteSpace(name)) return;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть заполнены", "Введите все поля корректно");
+            return;
+        }
 
         if (!int.TryParse(_updateDialog.RowBox.Text, out var rows)
             || !int.TryParse(_updateDialog.SeatsPerBox.Text, out var seatsPerRow))
+        {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Поля Ряд и Номер должны быть числовыми", "Введите все поля корректно");
             return;
+        }
 
         var updated = SelectedHall with
         {

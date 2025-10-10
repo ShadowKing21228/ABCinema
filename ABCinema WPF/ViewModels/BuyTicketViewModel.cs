@@ -70,8 +70,12 @@ public class BuyTicketViewModel : INotifyPropertyChanged
 
     private async Task BuyTicket(object? obj)
     {
-        if (obj is SeatItem seat)
-            await BuyTicketModel.AddReservation(Session, seat);
+        if (obj is not SeatItem seat)
+            return;
+        
+        await BuyTicketModel.AddReservation(Session, seat);
+
+        DialogCoordinator.ShowModalMessageExternal(this, "Спасибо за покупку!", $"Билет {seat.RowNumber+1} x  {seat.SeatNumber+1} в {Session.StartTime} в {Hall.Name} успешно зарезервирован!");
     }
     
     private async Task ShowBuyDialog(object? obj)

@@ -10,7 +10,7 @@ using MahApps.Metro.Controls.Dialogs;
 
 namespace ABCinema_WPF.ViewModels;
 
-public class CinemaViewModel : INotifyPropertyChanged
+public class MovieViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     
@@ -62,7 +62,7 @@ public class CinemaViewModel : INotifyPropertyChanged
     
     private readonly CinemaUpdateDialog _updateDialog;
 
-    private CinemaViewModel(ObservableCollection<MovieItem> movieItems, ObservableCollection<Genre> genreItems, IDialogCoordinator dialogCoordinator)
+    private MovieViewModel(ObservableCollection<MovieItem> movieItems, ObservableCollection<Genre> genreItems, IDialogCoordinator dialogCoordinator)
     {
         MovieItems = movieItems;
         DialogCoordinator = dialogCoordinator;
@@ -83,8 +83,8 @@ public class CinemaViewModel : INotifyPropertyChanged
         CloseCinemaDialogCommand = new RelayCommand(HideCinemaDialog);
     }
 
-    public static async Task<CinemaViewModel> CreateAsync(IDialogCoordinator dialogCoordinator)
-        => new(new ObservableCollection<MovieItem>(await CinemaModel.GetAllMovie()), new ObservableCollection<Genre>(await GenreModel.GetAllGenres()), dialogCoordinator);
+    public static async Task<MovieViewModel> CreateAsync(IDialogCoordinator dialogCoordinator)
+        => new(new ObservableCollection<MovieItem>(await MovieModel.GetAllMovies()), new ObservableCollection<Genre>(await GenreModel.GetAllGenres()), dialogCoordinator);
     
 
     private async Task ShowDialog(object? sender) => await DialogCoordinator.ShowMetroDialogAsync(this, _dialog);
@@ -98,12 +98,29 @@ public class CinemaViewModel : INotifyPropertyChanged
             string.IsNullOrWhiteSpace(_dialog.DurationMinutesBox.Text) ||
             string.IsNullOrWhiteSpace(_dialog.RatingBox.Text) ||
             string.IsNullOrWhiteSpace(_dialog.GetSelectedImagePath()))
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть заполнены", "Введите все поля корректно");
             return;
+        }
 
         if (!int.TryParse(_dialog.DurationMinutesBox.Text, out var durationMinutes) ||
             !float.TryParse(_dialog.RatingBox.Text, out var rating))
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Поля Длительность и Рейтинг должны быть числовыми", "Введите все поля корректно");
             return;
+        }
 
+        if (durationMinutes <= 0)
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Длительность фильма не может быть меньше или равна 0", "Введите все поля корректно");
+            return;
+        }
+        
+        if (rating is > 10 or < 0) {
+            DialogCoordinator.ShowModalMessageExternal(this, "Рейтинг должен быть от 0 до 10", "Введите поле корректно");
+            return;
+        }
+        
         var movie = new Movie(
             0, // пусть автоинкремент
             _dialog.CinemaNameBox.Text,
@@ -113,10 +130,10 @@ public class CinemaViewModel : INotifyPropertyChanged
             _dialog.GetSelectedImagePath()
         );
 
-        var movieId = await CinemaModel.AddMovieAndGetId(movie);
+        var movieId = await MovieModel.AddMovieAndGetId(movie);
 
         foreach (var genre in SelectedGenres) {
-            await CinemaModel.LinkGenreToMovie(movieId, genre.Id);
+            await MovieModel.LinkGenreToMovie(movieId, genre.Id);
         }
 
         await HideCinemaDialog(this);
@@ -151,10 +168,23 @@ public class CinemaViewModel : INotifyPropertyChanged
         if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description)
                                              || !int.TryParse(_updateDialog.DurationMinutesBox.Text, out var duration)
                                              || !float.TryParse(_updateDialog.RatingBox.Text, out var rating))
+        {
+            DialogCoordinator.ShowModalMessageExternal(this, "Поля Длительность и Рейтинг должны быть числовыми", "Введите все поля корректно");
             return;
+        }
+
+        if (rating is > 10 or < 0) {
+            DialogCoordinator.ShowModalMessageExternal(this, "Рейтинг должен быть от 0 до 10", "Введите поле корректно");
+            return;
+        }
+
+        if (duration <= 0) {
+            DialogCoordinator.ShowModalMessageExternal(this, "Длительность должна быть больше 0", "Введите поле корректно");
+            return;
+        }
         
 
-        await CinemaModel.UpdateMovie(new Movie(SelectedMovie.Id, title, description, duration, rating, poster));
+        await MovieModel.UpdateMovie(new Movie(SelectedMovie.Id, title, description, duration, rating, poster));
         
         await HideUpdateDialog(parameter);
     }

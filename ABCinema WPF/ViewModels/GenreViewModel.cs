@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using ABCinema_WPF.Controls;
 using ABCinema_WPF.Models;
@@ -45,8 +46,22 @@ public class GenreViewModel : INotifyPropertyChanged
     private async Task ShowDialog(object? parameter)
     {
         var var = await _dialogCoordinator.ShowInputAsync(this, "Добавление жанра", "Напишите название нового жанра");
-        
-        if (string.IsNullOrEmpty(var)) return;
+
+        if (string.IsNullOrEmpty(var))
+        {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть заполнены", "Введите все поля корректно");
+            return;
+        }
+
+        if (var.Length > 30) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Название жанра слишком длинное", "Введите все поля корректно");
+            return;
+        }
+
+        if (!Regex.IsMatch(var, @"^[a-zA-Zа-яА-ЯёЁ0-9]+$")) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "В названии жанра не могут быть спец символы", "Введите все поля корректно");
+            return;
+        }
 
         await GenreModel.CreateGenre(new Genre(1, var));
     }
@@ -55,8 +70,22 @@ public class GenreViewModel : INotifyPropertyChanged
     {
         var input = await _dialogCoordinator.ShowInputAsync(this, "Редактирование жанра", $"Новое название для жанра \"{SelectedGenre.Name}\"");
 
-        if (string.IsNullOrWhiteSpace(input)) return;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Все поля должны быть заполнены", "Введите все поля корректно");
+            return;
+        }
+        
+        if (input.Length > 30) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "Название жанра слишком длинное", "Введите все поля корректно");
+            return;
+        }
 
+        if (!Regex.IsMatch(input, @"^[a-zA-Zа-яА-ЯёЁ0-9]+$")) {
+            _dialogCoordinator.ShowModalMessageExternal(this, "В названии жанра не могут быть спец символы", "Введите все поля корректно");
+            return;
+        }
+        
         var updatedGenre = SelectedGenre with { Name = input };
 
         await GenreModel.UpdateGenre(updatedGenre);

@@ -34,7 +34,7 @@ public partial class CinemaDialog : CustomDialog
 
     private void GenreListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (DataContext is not CinemaViewModel vm || vm.SelectedGenres is null)
+        if (DataContext is not MovieViewModel vm || vm.SelectedGenres is null)
             return;
 
         vm.SelectedGenres.Clear();

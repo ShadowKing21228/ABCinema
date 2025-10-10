@@ -21,9 +21,6 @@ public static class HallModel
     public static async Task AddHallAsync(Hall hall)
         => await HallRepository.AddHall(hall);
     
-    public static int GetCapacity(this Hall hall)
-        => hall.Rows * hall.SeatsPerRow;
-    
     public static async Task UpdateHallAsync(Hall hall)
         => await HallRepository.Update(hall);
 

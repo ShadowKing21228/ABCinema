@@ -50,7 +50,7 @@ public static class MovieRepository
         return movie;
     }
     
-    public static async Task<Movie> AddMovie(Movie movie)
+    public static async Task AddMovie(Movie movie)
     {
         await using var conn = DbConnectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -64,7 +64,6 @@ public static class MovieRepository
         await cmd.ExecuteNonQueryAsync();
         
         AppLogger.LogInfo($"Добавление фильма {movie.Id} : {movie.Title} успешно завершено");
-        return movie;
     }
     
     public static async Task Update(Movie movie)

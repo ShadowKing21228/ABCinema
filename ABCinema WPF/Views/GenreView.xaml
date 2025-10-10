@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         
         <StackPanel Orientation="Horizontal" Grid.Row="0" Background="#3E3E3E">
-            <Button x:Name="AddHallButton" Command="{Binding ShowHallDialogCommand}" CommandParameter="{Binding}" Margin="20, 10,0,10">
+            <Button x:Name="AddGenreButton" Command="{Binding ShowGenreDialogCommand}" CommandParameter="{Binding}" Margin="20, 10,0,10">
                 <TextBlock Text="Добавить жанр" FontSize="18"> </TextBlock>
             </Button>
         </StackPanel>

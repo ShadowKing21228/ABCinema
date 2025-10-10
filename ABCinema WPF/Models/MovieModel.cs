@@ -4,17 +4,9 @@ using ABCinema_WPF.Utils;
 
 namespace ABCinema_WPF.Models;
 
-public static class CinemaModel
+public static class MovieModel
 {
-    public static async Task AddMovie(Movie movie)
-    {
-        var targetPath = Path.Combine("Resources/Images/Posters", Path.GetFileName(movie.Poster));
-        File.Copy(movie.Poster, targetPath, overwrite: true);
-        await MovieRepository.AddMovie(movie with { Poster = targetPath });
-    }
-
-
-    public static async Task<List<MovieItem>> GetAllMovie()
+    public static async Task<List<MovieItem>> GetAllMovies()
     {
         var var = await MovieRepository.GetAll();
         return var.Select(item => 

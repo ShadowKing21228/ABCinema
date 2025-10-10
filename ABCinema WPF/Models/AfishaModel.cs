@@ -6,11 +6,6 @@ namespace ABCinema_WPF.Models;
 
 public static class AfishaModel
 {
-    public static async Task<ObservableCollection<Session>> GetCurrentSessions(DateTime date)
-    {
-        return new ObservableCollection<Session>(await SessionRepository.GetAllByDate(date));
-    }
-    
     public static async Task<ObservableCollection<AfishaItem>> GetAfishaItemsAsync(DateTime date)
     {
         var sessions = await SessionRepository.GetAllByDate(date);
